@@ -1,24 +1,33 @@
 import Image from 'next/image';
 
-export default function PetList() {
+type Pet = {
+  id: string;
+  name: string;
+  ownerName: string;
+  imageUrl: string;
+  age: number;
+  notes: string;
+};
+
+type PetListProps = {
+  pets: Pet[];
+};
+
+export default function PetList({ pets }: PetListProps) {
   return (
     <ul className="gap-3 border-b border-black/[0.08] bg-white">
-      <li>
-        <button
-          className="flex h-[4.375rem] w-full
+      {pets.map(pet => (
+        <li key={pet.id}>
+          <button
+            className="flex h-[4.375rem] w-full
           cursor-pointer items-center gap-3 px-5
           text-base transition hover:bg-[#EFF1F2] focus:bg-[#EFF1F2]"
-        >
-          <Image
-            src="https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png"
-            alt="Pet image"
-            width={45}
-            height={45}
-            className="rounded-full object-cover"
-          />
-          <p className="font-semibold">Benjamin</p>
-        </button>
-      </li>
+          >
+            <Image src={pet.imageUrl} alt="Pet image" width={45} height={45} className="h-[45px] w-[45px] rounded-full object-cover" />
+            <p className="font-semibold">{pet.name}</p>
+          </button>
+        </li>
+      ))}
     </ul>
   );
 }
