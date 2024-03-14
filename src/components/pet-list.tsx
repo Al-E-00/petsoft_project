@@ -1,11 +1,11 @@
-import { Pet } from '@/lib/types';
+'use client';
+
+import { usePetContext } from '@/lib/hooks';
 import Image from 'next/image';
 
-type PetListProps = {
-  pets: Pet[];
-};
+export default function PetList() {
+  const { pets } = usePetContext();
 
-export default function PetList({ pets }: PetListProps) {
   return (
     <ul className="gap-3 border-b border-black/[0.08] bg-white">
       {pets.map(pet => (
