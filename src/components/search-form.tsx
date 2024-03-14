@@ -1,7 +1,7 @@
 export default function SearchForm() {
   return (
-    <form className='w-full h-full'>
-      <input className='w-full h-full bg-white/20' />
+    <form className="h-full w-full">
+      <input className="h-full w-full bg-white/20" />
     </form>
   );
 }
