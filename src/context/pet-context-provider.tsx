@@ -8,7 +8,12 @@ type PetContextProviderProps = {
   data: Pet[];
 };
 
-export const PetContext = createContext(null);
+type TPetContext = {
+  pets: Pet[];
+  selectedPetId: string | null;
+};
+
+export const PetContext = createContext<TPetContext | null>(null);
 
 export default function PetContextProvider({ children, data }: PetContextProviderProps) {
   const [pets, setPets] = useState<Pet[]>(data);
