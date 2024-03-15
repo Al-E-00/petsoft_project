@@ -36,7 +36,7 @@ type Props = {
 
 function TopBar({ pet }: Props) {
   return (
-    <div className="flex items-center border-b border-black/[0.08] bg-white px-8 py-5">
+    <div className="border-light flex items-center border-b bg-white px-8 py-5">
       <Image src={pet?.imageUrl} alt="Selected pet image" height={75} width={75} className="h-[75px] w-[75px] rounded-full object-cover" />
       <h2 className="ml-5 text-3xl font-semibold leading-7">{pet?.name}</h2>
     </div>
@@ -59,5 +59,5 @@ function OtherInfo({ pet }: Props) {
 }
 
 function Notes({ pet }: Props) {
-  return <section className="mx-8 mb-9 flex-1 rounded-md border border-black/[0.08] bg-white px-7 py-5">{pet?.notes}</section>;
+  return <section className="border-light mx-8 mb-9 flex-1 rounded-md border  bg-white px-7 py-5">{pet?.notes}</section>;
 }

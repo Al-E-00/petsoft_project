@@ -7,7 +7,7 @@ import Image from 'next/image';
 export default function PetList() {
   const { pets, selectedPetId, handleChangeSelectedPetId } = usePetContext();
   return (
-    <ul className="gap-3 border-b border-black/[0.08] bg-white">
+    <ul className="border-light gap-3 border-b bg-white">
       {pets.map(pet => (
         <li key={pet.id}>
           <button
