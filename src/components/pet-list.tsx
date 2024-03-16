@@ -8,10 +8,12 @@ export default function PetList() {
   const { pets, selectedPetId, handleChangeSelectedPetId } = usePetContext();
   const { searchQuery } = useSearchContext();
 
-  const filteredPets = pets.filter(pet => pet.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredPets = pets.filter(pet =>
+    pet.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <ul className="gap-3 border-b border-light bg-white">
+    <ul className="gap-3 overflow-auto border-b border-light bg-white">
       {filteredPets.map(pet => (
         <li key={pet.id}>
           <button
@@ -25,7 +27,13 @@ export default function PetList() {
               }
             )}
           >
-            <Image src={pet.imageUrl} alt="Pet image" width={45} height={45} className="h-[45px] w-[45px] rounded-full object-cover" />
+            <Image
+              src={pet.imageUrl}
+              alt="Pet image"
+              width={45}
+              height={45}
+              className="h-[45px] w-[45px] rounded-full object-cover"
+            />
             <p className="font-semibold">{pet.name}</p>
           </button>
         </li>

@@ -23,9 +23,9 @@ type TPetContext = {
 
 export const PetContext = createContext<TPetContext | null>(null);
 
-export default function PetContextProvider({ children, data }: PetContextProviderProps) {
+export default function PetContextProvider({ children, data: pets }: PetContextProviderProps) {
   // state
-  const [pets, setPets] = useState<Pet[]>(data);
+  // const [pets, setPets] = useState<Pet[]>(data);
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
 
   // derived state
@@ -34,14 +34,6 @@ export default function PetContextProvider({ children, data }: PetContextProvide
 
   // event handlers / actions
   const handleAddPet = async (newPet: Omit<Pet, 'id'>) => {
-    /*     setPets(prev => [
-      ...prev,
-      {
-        id: Date.now().toString(),
-        ...newPet,
-      },
-    ]); */
-
     await addPet(newPet);
   };
 
