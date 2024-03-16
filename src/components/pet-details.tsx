@@ -4,6 +4,7 @@ import { usePetContext } from '@/lib/hooks';
 import { Pet } from '@/lib/types';
 import Image from 'next/image';
 import PetButton from './pet-button';
+import { deletePet } from '@/actions/actions';
 
 export default function PetDetails() {
   const { selectedPet } = usePetContext();
@@ -40,12 +41,18 @@ function TopBar({ pet }: Props) {
 
   return (
     <div className="flex items-center border-b border-light bg-white px-8 py-5">
-      <Image src={pet?.imageUrl} alt="Selected pet image" height={75} width={75} className="h-[75px] w-[75px] rounded-full object-cover" />
+      <Image
+        src={pet?.imageUrl}
+        alt="Selected pet image"
+        height={75}
+        width={75}
+        className="h-[75px] w-[75px] rounded-full object-cover"
+      />
       <h2 className="ml-5 text-3xl font-semibold leading-7">{pet?.name}</h2>
 
       <div className="ml-auto space-x-2">
         <PetButton actionType="edit">Edit</PetButton>
-        <PetButton actionType="checkout" onClick={() => handleCheckoutPet(pet.id)}>
+        <PetButton actionType="checkout" onClick={async () => await deletePet(pet.id)}>
           Checkout
         </PetButton>
       </div>
@@ -69,5 +76,9 @@ function OtherInfo({ pet }: Props) {
 }
 
 function Notes({ pet }: Props) {
-  return <section className="mx-8 mb-9 flex-1 rounded-md border border-light  bg-white px-7 py-5">{pet?.notes}</section>;
+  return (
+    <section className="mx-8 mb-9 flex-1 rounded-md border border-light  bg-white px-7 py-5">
+      {pet?.notes}
+    </section>
+  );
 }

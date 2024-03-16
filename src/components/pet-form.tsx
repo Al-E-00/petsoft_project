@@ -6,7 +6,7 @@ import { usePetContext } from '@/lib/hooks';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
-import { addPet } from '@/actions/actions';
+import { addPet, editPet } from '@/actions/actions';
 import { toast } from 'sonner';
 
 type PetFormProps = {
@@ -20,11 +20,19 @@ export default function PetForm({ actionType, onFormSubmission }: PetFormProps) 
   return (
     <form
       action={async formData => {
-        const error = await addPet(formData);
+        if (actionType === 'add') {
+          const error = await addPet(formData);
+          if (error) {
+            toast.error(error.message);
+            return;
+          }
+        } else if (actionType === 'edit') {
+          const error = await editPet(selectedPet!.id, formData);
 
-        if (error) {
-          toast.error(error.message);
-          return;
+          if (error) {
+            toast.error(error.message);
+            return;
+          }
         }
         onFormSubmission();
       }}
