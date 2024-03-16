@@ -13,7 +13,7 @@ export default function PetList() {
   );
 
   return (
-    <ul className="gap-3 overflow-auto border-b border-light bg-white">
+    <ul className="border-b border-light bg-white">
       {filteredPets.map(pet => (
         <li key={pet.id}>
           <button

@@ -8,6 +8,7 @@ import { PlusIcon } from '@radix-ui/react-icons';
 import { Button } from './ui/button';
 
 import { Dialog, DialogContent, DialogHeader, DialogTrigger, DialogTitle } from './ui/dialog';
+import { flushSync } from 'react-dom';
 
 type PetButtonProps = {
   actionType: 'add' | 'edit' | 'checkout';
@@ -46,7 +47,14 @@ export default function PetButton({ actionType, disabled, onClick, children }: P
               <DialogTitle>{actionType === 'edit' ? 'Edit pet' : 'Add  a new pet'}</DialogTitle>
             </DialogHeader>
 
-            <PetForm actionType={actionType} onFormSubmission={() => setIsFormOpen(false)} />
+            <PetForm
+              actionType={actionType}
+              onFormSubmission={() =>
+                flushSync(() => {
+                  setIsFormOpen(false);
+                })
+              }
+            />
           </DialogContent>
         </Dialog>
       );
