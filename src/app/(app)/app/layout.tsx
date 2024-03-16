@@ -3,10 +3,12 @@ import AppHeader from '@/components/app-header';
 import BackgroundPattern from '@/components/background-pattern';
 import PetContextProvider from '@/context/pet-context-provider';
 import SearchContextProvider from '@/context/search-context-provider';
+
 import { Pet } from '@/lib/types';
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const response = await fetch('https://bytegrad.com/course-assets/projects/petsoft/api/pets');
+
   if (!response.ok) {
     throw new Error('Could not fetch pets');
   }
