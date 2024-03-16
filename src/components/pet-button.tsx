@@ -41,7 +41,7 @@ export default function PetButton({ actionType, onClick, children }: PetButtonPr
               <DialogTitle>{actionType === 'edit' ? 'Edit pet' : 'Add  a new pet'}</DialogTitle>
             </DialogHeader>
 
-            <PetForm />
+            <PetForm actionType={actionType} />
           </DialogContent>
         </Dialog>
       );
