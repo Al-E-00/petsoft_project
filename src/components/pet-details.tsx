@@ -1,7 +1,7 @@
 'use client';
 
+import { Pet } from '@prisma/client';
 import { usePetContext } from '@/lib/hooks';
-import { Pet } from '@/lib/types';
 import Image from 'next/image';
 import PetButton from './pet-button';
 
@@ -47,7 +47,7 @@ function TopBar({ pet }: Props) {
         width={75}
         className="h-[75px] w-[75px] rounded-full object-cover"
       />
-      <h2 className="ml-5 text-3xl font-semibold leading-7">{pet?.name}</h2>
+      <h2 className="ml-5 text-3xl font-semibold leading-7">{pet.name}</h2>
 
       <div className="ml-auto space-x-2">
         <PetButton actionType="edit">Edit</PetButton>
@@ -69,11 +69,11 @@ function OtherInfo({ pet }: Props) {
     <div className="flex justify-around px-5 py-10 text-center">
       <div>
         <h3 className="text-[.8125rem] font-medium uppercase text-zinc-700">Owner name</h3>
-        <p className="mt-1 text-lg text-zinc-700">{pet?.ownerName}</p>
+        <p className="mt-1 text-lg text-zinc-700">{pet.ownerName}</p>
       </div>
       <div>
         <h3 className="text-[.8125rem] font-medium uppercase text-zinc-700">Age</h3>
-        <p className="mt-1 text-lg text-zinc-700">{pet?.age}</p>
+        <p className="mt-1 text-lg text-zinc-700">{pet.age}</p>
       </div>
     </div>
   );
@@ -82,7 +82,7 @@ function OtherInfo({ pet }: Props) {
 function Notes({ pet }: Props) {
   return (
     <section className="mx-8 mb-9 flex-1 rounded-md border border-light  bg-white px-7 py-5">
-      {pet?.notes}
+      {pet.notes}
     </section>
   );
 }
