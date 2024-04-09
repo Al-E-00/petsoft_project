@@ -17,7 +17,6 @@ type PetFormProps = {
   onFormSubmission: () => void;
 };
 
-
 export default function PetForm({ actionType, onFormSubmission }: PetFormProps) {
   const { handleAddPet, handleEditPet, selectedPet } = usePetContext();
   const {
@@ -27,13 +26,16 @@ export default function PetForm({ actionType, onFormSubmission }: PetFormProps) 
     formState: { errors },
   } = useForm<TPetForm>({
     resolver: zodResolver(petFormSchema),
-    defaultValues: {
-      name: selectedPet?.name,
-      ownerName: selectedPet?.ownerName,
-      imageUrl: selectedPet?.imageUrl,
-      age: selectedPet?.age,
-      notes: selectedPet?.notes,
-    }
+    defaultValues:
+      actionType === 'edit'
+        ? {
+            name: selectedPet?.name,
+            ownerName: selectedPet?.ownerName,
+            imageUrl: selectedPet?.imageUrl,
+            age: selectedPet?.age,
+            notes: selectedPet?.notes,
+          }
+        : undefined,
   });
 
   return (
@@ -90,7 +92,7 @@ export default function PetForm({ actionType, onFormSubmission }: PetFormProps) 
 
         <div className="space-y-1">
           <Label htmlFor="notes">Notes</Label>
-          <Textarea id='notes' {...register('notes')} />
+          <Textarea id="notes" {...register('notes')} />
           {errors.notes && <p className="text-red-500">{errors.notes.message}</p>}
         </div>
       </div>

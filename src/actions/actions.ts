@@ -1,14 +1,21 @@
 'use server';
 
 import prisma from '@/lib/db';
-import { Pet } from '@prisma/client';
-import { PetEssentials } from '@/lib/types';
 
 import { sleep } from '@/lib/utils';
 import { revalidatePath } from 'next/cache';
 import { petFormSchema, petIdSchema } from '@/lib/validations';
+import { signIn } from '@/lib/auth';
 
-// When we get data from the client, we are not sure what it will be, so we use the unknown type.
+// --- user actions ---
+
+export async function logIn(formData: FormData) {
+  const authData = Object.fromEntries(formData.entries());
+
+  await signIn('credentials', authData);
+}
+
+// --- pet actions ---
 export async function addPet(pet: unknown) {
   await sleep(1000);
 
