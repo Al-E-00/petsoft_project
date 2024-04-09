@@ -39,19 +39,21 @@ export async function signUp(formData: FormData) {
 export async function addPet(pet: unknown) {
   await sleep(1000);
 
+  // Authentication check
   const session = await auth();
   if (!session?.user) {
     redirect('/login');
   }
 
+  // Validation
   const validatedPet = petFormSchema.safeParse(pet);
-
   if (!validatedPet.success) {
     return {
       message: 'Invalid pet data',
     };
   }
 
+  // Database mutation
   try {
     await prisma.pet.create({
       data: {
@@ -77,6 +79,13 @@ export async function addPet(pet: unknown) {
 export async function editPet(petId: unknown, newPetData: unknown) {
   await sleep(1000);
 
+  // Authentication check
+  const session = await auth();
+  if (!session?.user) {
+    redirect('/login');
+  }
+
+  // Validation
   const validatedPetId = petIdSchema.safeParse(petId);
   const validatedPet = petFormSchema.safeParse(newPetData);
 
@@ -86,6 +95,25 @@ export async function editPet(petId: unknown, newPetData: unknown) {
     };
   }
 
+  // Authorization check (user owns pet)
+  const pet = await prisma.pet.findUnique({
+    where: { id: validatedPetId.data },
+    select: { userId: true },
+  });
+
+  if (!pet) {
+    return {
+      message: 'Pet not found',
+    };
+  }
+
+  if (pet.userId !== session.user.id) {
+    return {
+      message: 'Not authorized to edit pet',
+    };
+  }
+
+  // Database mutation
   try {
     await prisma.pet.update({
       where: { id: validatedPetId.data },
@@ -103,6 +131,13 @@ export async function editPet(petId: unknown, newPetData: unknown) {
 export async function deletePet(petId: unknown) {
   await sleep(1000);
 
+  //Authentication check
+  const session = await auth();
+  if (!session?.user) {
+    redirect('/login');
+  }
+
+  //Validation
   const validatedPetId = petIdSchema.safeParse(petId);
 
   if (!validatedPetId.success) {
@@ -111,6 +146,25 @@ export async function deletePet(petId: unknown) {
     };
   }
 
+  //Authorization check (user owns pet)
+  const pet = await prisma.pet.findUnique({
+    where: { id: validatedPetId.data },
+    select: { userId: true },
+  });
+
+  if (!pet) {
+    return {
+      message: 'Pet not found',
+    };
+  }
+
+  if (pet.userId !== session.user.id) {
+    return {
+      message: 'Not authorized to delete pet',
+    };
+  }
+
+  //Database mutation
   try {
     await prisma.pet.delete({
       where: { id: validatedPetId.data },
