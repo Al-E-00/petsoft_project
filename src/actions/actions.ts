@@ -5,24 +5,44 @@ import prisma from '@/lib/db';
 import { sleep } from '@/lib/utils';
 import { revalidatePath } from 'next/cache';
 import { petFormSchema, petIdSchema } from '@/lib/validations';
-import { signIn } from '@/lib/auth';
+import { auth, signIn } from '@/lib/auth';
 import { signOut } from '@/lib/auth';
+import bcrypt from 'bcryptjs';
+import { redirect } from 'next/navigation';
 
 // --- user actions ---
 
 export async function logIn(formData: FormData) {
-  const authData = Object.fromEntries(formData.entries());
+  await signIn('credentials', formData);
 
-  await signIn('credentials', authData);
+  redirect('/app/dashboard');
 }
 
 export async function logOut() {
   await signOut({ redirectTo: '/' });
 }
 
+export async function signUp(formData: FormData) {
+  const hashedPassword = await bcrypt.hash(formData.get('password') as string, 10);
+
+  await prisma.user.create({
+    data: {
+      email: formData.get('email') as string,
+      hashedPassword: hashedPassword,
+    },
+  });
+
+  await signIn('credentials', formData);
+}
+
 // --- pet actions ---
 export async function addPet(pet: unknown) {
   await sleep(1000);
+
+  const session = await auth();
+  if (!session?.user) {
+    redirect('/login');
+  }
 
   const validatedPet = petFormSchema.safeParse(pet);
 
@@ -34,7 +54,14 @@ export async function addPet(pet: unknown) {
 
   try {
     await prisma.pet.create({
-      data: validatedPet.data,
+      data: {
+        ...validatedPet.data,
+        user: {
+          connect: {
+            id: session.user.id,
+          },
+        },
+      },
     });
   } catch (error) {
     console.error('addPet ~ error:', error);
