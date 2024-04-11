@@ -41,21 +41,14 @@ export async function logIn(prevState: unknown, formData: unknown) {
       }
     }
 
-    return {
-      message: 'Could not log in',
-    };
+    throw error; //NextJS redirect throws error, so we need to rethrow it
   }
-  redirect('/app/dashboard');
 }
 
 export async function logOut() {
-  try {
-    await signOut({ redirectTo: '/' });
-  } catch (error) {
-    return {
-      message: 'Could not log out',
-    };
-  }
+  await sleep(1000);
+
+  await signOut({ redirectTo: '/' });
 }
 
 export async function signUp(prevState: unknown, formData: unknown) {
