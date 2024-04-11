@@ -4,34 +4,86 @@ import prisma from '@/lib/db';
 
 import { sleep } from '@/lib/utils';
 import { revalidatePath } from 'next/cache';
-import { petFormSchema, petIdSchema } from '@/lib/validations';
+import { authSchema, petFormSchema, petIdSchema } from '@/lib/validations';
 import { signIn } from '@/lib/auth';
 import { signOut } from '@/lib/auth';
 import bcrypt from 'bcryptjs';
 import { redirect } from 'next/navigation';
 import checkAuth, { getPetById } from '@/lib/server-utils';
+import { Prisma } from '@prisma/client';
 
 // --- user actions ---
+export async function logIn(formData: unknown) {
+  if (!(formData instanceof FormData)) {
+    return {
+      message: 'Invalid form data',
+    };
+  }
 
-export async function logIn(formData: FormData) {
-  await signIn('credentials', formData);
+  try {
+    await signIn('credentials', formData);
+  } catch (error) {
+    return {
+      message: 'Invalid credentials',
+    };
+  }
 
   redirect('/app/dashboard');
 }
 
 export async function logOut() {
-  await signOut({ redirectTo: '/' });
+  try {
+    await signOut({ redirectTo: '/' });
+  } catch (error) {
+    return {
+      message: 'Could not log out',
+    };
+  }
 }
 
-export async function signUp(formData: FormData) {
-  const hashedPassword = await bcrypt.hash(formData.get('password') as string, 10);
+export async function signUp(formData: unknown) {
+  // Check if formData is a FormData type
+  if (!(formData instanceof FormData)) {
+    return {
+      message: 'Invalid form data',
+    };
+  }
 
-  await prisma.user.create({
-    data: {
-      email: formData.get('email') as string,
-      hashedPassword: hashedPassword,
-    },
-  });
+  // Convert formData to a plain object
+  const formDataEntries = Object.fromEntries(formData.entries());
+
+  // Validate
+  const validatedFormData = authSchema.safeParse(formDataEntries);
+  if (!validatedFormData.success) {
+    return {
+      message: 'Invalid form data',
+    };
+  }
+
+  const { email, password } = validatedFormData.data;
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  try {
+    await prisma.user.create({
+      data: {
+        email: email,
+        hashedPassword: hashedPassword,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        return {
+          message: 'Email is already in use',
+        };
+      }
+    }
+
+    return {
+      message: 'Could not sign up',
+    };
+  }
 
   await signIn('credentials', formData);
 }
