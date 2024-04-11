@@ -1,7 +1,7 @@
 import NextAuth, { NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import prisma from './db';
 import bcrypt from 'bcryptjs';
+import { getUserByEmail } from './server-utils';
 
 const config = {
   pages: {
@@ -10,14 +10,11 @@ const config = {
   providers: [
     Credentials({
       async authorize(credentials) {
-        // runs on login
+        // Runs on login
         const { email, password } = credentials;
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: email,
-          },
-        });
+        const user = await getUserByEmail(email);
+
         if (!user) {
           console.log('User not found');
           return null;
@@ -35,7 +32,7 @@ const config = {
   ],
   callbacks: {
     authorized: ({ auth, request }) => {
-      // runs on every request with middleware
+      // Runs on every request with middleware
       const isLoggedIn = !!auth?.user;
       const isTryingToAccessApp = request.nextUrl.pathname.includes('/app');
 
@@ -59,7 +56,7 @@ const config = {
     },
     jwt: ({ token, user }) => {
       if (user) {
-        //on sign in
+        // On sign in
         if (user.id) {
           token.userId = user.id;
         }
